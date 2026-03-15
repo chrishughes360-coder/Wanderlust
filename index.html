@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanderlust — Vacation Countdown</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sand: #f5e6c8;
+    --sand-light: #fdf6e9;
+    --sand-mid: #e8d5a3;
+    --ocean: #1a3a4a;
+    --ocean-mid: #2d5a6e;
+    --ocean-light: #4a8fa8;
+    --coral: #e8714a;
+    --coral-light: #f0956e;
+    --gold: #c9963c;
+    --ink: #1a1a2e;
+    --white: #ffffff;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+background-color: #0d2333;
+min-height: 100%;
+}
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+position: relative;
+}
+
+/* Full-page background wrapper - avoids body bg issues in GitHub Pages */
+.page-bg {
+position: fixed;
+top: 0; left: 0; right: 0; bottom: 0;
+z-index: 0;
+background-color: #1a3a4a;
+background-image: linear-gradient(160deg, #0d2333 0%, #1a3a4a 40%, #1e4559 100%);
+}
+
+.page-bg::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background-image:
+radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,143,168,0.35) 0%, transparent 60%),
+radial-gradient(ellipse 60% 40% at 90% 90%, rgba(201,150,60,0.15) 0%, transparent 50%);
+}
+
+.page-bg::after {
+content: ‘’;
+position: absolute;
+bottom: 0; left: 0; right: 0;
+height: 300px;
+background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ viewBox=‘0 0 1440 200’%3E%3Cpath fill=‘rgba(255,255,255,0.03)’ d=‘M0,100 C360,160 720,40 1080,100 C1260,130 1350,80 1440,100 L1440,200 L0,200 Z’/%3E%3Cpath fill=‘rgba(255,255,255,0.02)’ d=‘M0,140 C400,100 800,180 1200,130 C1320,110 1380,150 1440,140 L1440,200 L0,200 Z’/%3E%3C/svg%3E”);
+background-repeat: no-repeat;
+background-position: bottom;
+background-size: cover;
+}
+
+.container {
+position: relative;
+z-index: 1;
+max-width: 900px;
+margin: 0 auto;
+padding: 40px 20px 80px;
+}
+
+header {
+text-align: center;
+margin-bottom: 48px;
+animation: fadeDown 0.8s ease both;
+}
+
+.header-eyebrow {
+font-size: 11px;
+letter-spacing: 4px;
+text-transform: uppercase;
+color: var(–ocean-light);
+margin-bottom: 12px;
+font-weight: 500;
+}
+
+h1 {
+font-family: ‘Playfair Display’, serif;
+font-size: clamp(42px, 8vw, 72px);
+color: var(–sand);
+line-height: 0.95;
+letter-spacing: -1px;
+}
+
+h1 em { color: var(–coral); font-style: italic; }
+
+.header-sub {
+margin-top: 16px;
+color: rgba(245,230,200,0.5);
+font-size: 14px;
+font-weight: 300;
+letter-spacing: 0.5px;
+}
+
+.compass {
+display: inline-block;
+width: 36px; height: 36px;
+margin-bottom: 16px;
+opacity: 0.7;
+animation: spin 20s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+#hero-card {
+background: linear-gradient(135deg, rgba(245,230,200,0.12) 0%, rgba(245,230,200,0.06) 100%);
+border: 1px solid rgba(245,230,200,0.15);
+border-radius: 24px;
+padding: 40px;
+margin-bottom: 32px;
+backdrop-filter: blur(10px);
+animation: fadeUp 0.8s 0.2s ease both;
+min-height: 180px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.hero-empty { text-align: center; color: rgba(245,230,200,0.4); }
+.hero-empty svg { margin-bottom: 12px; opacity: 0.4; }
+.hero-empty p { font-size: 15px; font-weight: 300; }
+.hero-content { width: 100%; }
+
+.hero-label {
+font-size: 10px;
+letter-spacing: 3px;
+text-transform: uppercase;
+color: var(–coral);
+font-weight: 500;
+margin-bottom: 8px;
+}
+
+.hero-trip-name {
+font-family: ‘Playfair Display’, serif;
+font-size: clamp(28px, 5vw, 44px);
+color: var(–sand);
+margin-bottom: 4px;
+}
+
+.hero-dates {
+font-size: 13px;
+color: rgba(245,230,200,0.5);
+margin-bottom: 28px;
+font-weight: 300;
+}
+
+.countdown-grid { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.count-block {
+background: rgba(255,255,255,0.07);
+border: 1px solid rgba(255,255,255,0.1);
+border-radius: 14px;
+padding: 16px 20px;
+text-align: center;
+min-width: 80px;
+flex: 1;
+}
+
+.count-num {
+font-family: ‘Playfair Display’, serif;
+font-size: 38px;
+color: var(–sand);
+line-height: 1;
+display: block;
+}
+
+.count-label {
+font-size: 10px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.45);
+margin-top: 6px;
+display: block;
+}
+
+.hero-today {
+font-family: ‘Playfair Display’, serif;
+font-size: 28px;
+color: var(–gold);
+font-style: italic;
+}
+
+.add-btn-wrap {
+animation: fadeUp 0.8s 0.35s ease both;
+margin-bottom: 32px;
+text-align: center;
+}
+
+.add-btn {
+background: var(–coral);
+color: white;
+border: none;
+border-radius: 50px;
+padding: 14px 32px;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+letter-spacing: 0.5px;
+transition: all 0.2s ease;
+display: inline-flex;
+align-items: center;
+gap: 8px;
+font-family: ‘DM Sans’, sans-serif;
+}
+
+.add-btn:hover {
+background: var(–coral-light);
+transform: translateY(-2px);
+box-shadow: 0 10px 30px rgba(232,113,74,0.35);
+}
+
+.add-btn:active { transform: translateY(0); }
+
+.modal-overlay {
+position: fixed;
+inset: 0;
+background: rgba(10,25,35,0.85);
+backdrop-filter: blur(6px);
+z-index: 100;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.25s ease;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal {
+background: linear-gradient(145deg, #1e4559, #162e3d);
+border: 1px solid rgba(245,230,200,0.15);
+border-radius: 24px;
+padding: 36px;
+width: 100%;
+max-width: 440px;
+transform: translateY(20px) scale(0.97);
+transition: transform 0.25s ease;
+box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.modal-overlay.open .modal { transform: translateY(0) scale(1); }
+
+.modal h2 {
+font-family: ‘Playfair Display’, serif;
+color: var(–sand);
+font-size: 26px;
+margin-bottom: 24px;
+}
+
+.field { margin-bottom: 18px; }
+
+.field label {
+display: block;
+font-size: 11px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.5);
+margin-bottom: 8px;
+font-weight: 500;
+}
+
+.field input {
+width: 100%;
+background: rgba(255,255,255,0.06);
+border: 1px solid rgba(245,230,200,0.15);
+border-radius: 10px;
+padding: 12px 16px;
+color: var(–sand);
+font-size: 15px;
+font-family: ‘DM Sans’, sans-serif;
+outline: none;
+transition: border-color 0.2s;
+}
+
+.field input:focus { border-color: var(–coral); background: rgba(255,255,255,0.09); }
+.field input::placeholder { color: rgba(245,230,200,0.25); }
+.field input[type=“date”]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+
+.emoji-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.emoji-btn {
+background: rgba(255,255,255,0.06);
+border: 2px solid transparent;
+border-radius: 8px;
+width: 40px; height: 40px;
+font-size: 20px;
+cursor: pointer;
+transition: all 0.15s;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.emoji-btn:hover { background: rgba(255,255,255,0.12); }
+.emoji-btn.selected { border-color: var(–coral); background: rgba(232,113,74,0.15); }
+
+.modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+
+.btn-cancel {
+flex: 1;
+background: transparent;
+border: 1px solid rgba(245,230,200,0.2);
+border-radius: 10px;
+padding: 12px;
+color: rgba(245,230,200,0.6);
+font-size: 14px;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+}
+
+.btn-cancel:hover { border-color: rgba(245,230,200,0.4); color: var(–sand); }
+
+.btn-save {
+flex: 2;
+background: var(–coral);
+border: none;
+border-radius: 10px;
+padding: 12px;
+color: white;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+}
+
+.btn-save:hover { background: var(–coral-light); }
+
+.trips-section { animation: fadeUp 0.8s 0.45s ease both; }
+
+.section-label {
+font-size: 10px;
+letter-spacing: 3.5px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.35);
+font-weight: 500;
+margin-bottom: 16px;
+padding-left: 4px;
+}
+
+.trips-list { display: flex; flex-direction: column; gap: 12px; }
+
+/* Trip Card */
+.trip-card {
+background: rgba(255,255,255,0.05);
+border: 1px solid rgba(245,230,200,0.1);
+border-radius: 16px;
+overflow: hidden;
+animation: fadeUp 0.5s ease both;
+transition: border-color 0.2s;
+}
+
+.trip-card:hover { border-color: rgba(245,230,200,0.18); }
+.trip-card.past { opacity: 0.55; }
+
+.trip-header {
+display: flex;
+align-items: center;
+gap: 16px;
+padding: 20px 24px;
+cursor: pointer;
+position: relative;
+user-select: none;
+}
+
+.trip-header::before {
+content: ‘’;
+position: absolute;
+left: 0; top: 0; bottom: 0;
+width: 3px;
+background: var(–coral);
+opacity: 0;
+transition: opacity 0.2s;
+border-radius: 3px 0 0 3px;
+}
+
+.trip-card.expanded .trip-header::before,
+.trip-header:hover::before { opacity: 1; }
+.trip-card.past .trip-header::before { background: var(–ocean-light); }
+
+.trip-emoji {
+font-size: 28px;
+width: 48px; height: 48px;
+display: flex;
+align-items: center;
+justify-content: center;
+background: rgba(255,255,255,0.06);
+border-radius: 12px;
+flex-shrink: 0;
+}
+
+.trip-info { flex: 1; min-width: 0; }
+
+.trip-name {
+font-family: ‘Playfair Display’, serif;
+font-size: 18px;
+color: var(–sand);
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.trip-meta {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-top: 3px;
+flex-wrap: wrap;
+}
+
+.trip-date-range {
+font-size: 12px;
+color: rgba(245,230,200,0.45);
+font-weight: 300;
+}
+
+.checklist-badge {
+font-size: 10px;
+letter-spacing: 0.5px;
+padding: 2px 8px;
+border-radius: 20px;
+font-weight: 500;
+}
+
+.checklist-badge.done { background: rgba(74,200,120,0.15); color: #4ac878; }
+.checklist-badge.partial { background: rgba(201,150,60,0.15); color: var(–gold); }
+.checklist-badge.empty { background: rgba(245,230,200,0.07); color: rgba(245,230,200,0.3); }
+
+.trip-countdown { text-align: right; flex-shrink: 0; }
+
+.trip-days-num {
+font-family: ‘Playfair Display’, serif;
+font-size: 26px;
+color: var(–sand);
+display: block;
+line-height: 1;
+}
+
+.trip-days-label {
+font-size: 10px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.4);
+}
+
+.trip-past-tag {
+font-size: 10px;
+letter-spacing: 1px;
+text-transform: uppercase;
+color: var(–ocean-light);
+background: rgba(74,143,168,0.15);
+padding: 3px 8px;
+border-radius: 20px;
+}
+
+.trip-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+
+.trip-chevron {
+background: transparent;
+border: none;
+color: rgba(245,230,200,0.3);
+cursor: pointer;
+padding: 6px;
+border-radius: 8px;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+}
+
+.trip-chevron svg { transition: transform 0.25s ease; }
+.trip-card.expanded .trip-chevron svg { transform: rotate(180deg); }
+.trip-chevron:hover { color: rgba(245,230,200,0.7); background: rgba(255,255,255,0.06); }
+
+.trip-delete {
+background: transparent;
+border: none;
+color: rgba(245,230,200,0.2);
+cursor: pointer;
+padding: 6px;
+border-radius: 8px;
+transition: all 0.2s;
+font-size: 14px;
+line-height: 1;
+}
+
+.trip-delete:hover { color: #e05555; background: rgba(224,85,85,0.1); }
+
+/* Checklist panel */
+.checklist-panel {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.trip-card.expanded .checklist-panel { max-height: 1000px; }
+
+.checklist-inner {
+border-top: 1px solid rgba(245,230,200,0.08);
+padding: 20px 24px 24px;
+}
+
+.checklist-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+margin-bottom: 12px;
+}
+
+.checklist-title {
+font-size: 10px;
+letter-spacing: 2.5px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.4);
+font-weight: 500;
+}
+
+.checklist-progress-text {
+font-size: 11px;
+color: rgba(245,230,200,0.35);
+}
+
+.progress-bar-wrap {
+height: 3px;
+background: rgba(255,255,255,0.07);
+border-radius: 2px;
+margin-bottom: 16px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–coral), var(–gold));
+border-radius: 2px;
+transition: width 0.4s ease;
+}
+
+.checklist-items { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; }
+
+.check-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 7px 10px;
+border-radius: 8px;
+transition: background 0.15s;
+}
+
+.check-item:hover { background: rgba(255,255,255,0.04); }
+
+.check-box {
+width: 18px; height: 18px;
+border: 1.5px solid rgba(245,230,200,0.25);
+border-radius: 5px;
+cursor: pointer;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.15s;
+background: transparent;
+}
+
+.check-box:hover { border-color: var(–coral); }
+
+.check-item.checked .check-box { background: var(–coral); border-color: var(–coral); }
+
+.check-tick { opacity: 0; transition: opacity 0.15s; }
+.check-item.checked .check-tick { opacity: 1; }
+
+.check-text {
+flex: 1;
+font-size: 14px;
+color: rgba(245,230,200,0.8);
+transition: all 0.2s;
+line-height: 1.3;
+}
+
+.check-item.checked .check-text {
+color: rgba(245,230,200,0.3);
+text-decoration: line-through;
+text-decoration-color: rgba(245,230,200,0.2);
+}
+
+.check-remove {
+background: transparent;
+border: none;
+color: transparent;
+cursor: pointer;
+font-size: 12px;
+padding: 3px 5px;
+border-radius: 4px;
+transition: all 0.15s;
+line-height: 1;
+flex-shrink: 0;
+}
+
+.check-item:hover .check-remove { color: rgba(245,230,200,0.2); }
+.check-remove:hover { color: #e05555 !important; background: rgba(224,85,85,0.1); }
+
+.add-item-row { display: flex; gap: 8px; align-items: center; }
+
+.add-item-input {
+flex: 1;
+background: rgba(255,255,255,0.05);
+border: 1px solid rgba(245,230,200,0.12);
+border-radius: 8px;
+padding: 9px 14px;
+color: var(–sand);
+font-size: 13px;
+font-family: ‘DM Sans’, sans-serif;
+outline: none;
+transition: border-color 0.2s;
+}
+
+.add-item-input:focus { border-color: rgba(232,113,74,0.5); background: rgba(255,255,255,0.07); }
+.add-item-input::placeholder { color: rgba(245,230,200,0.2); }
+
+.add-item-btn {
+background: rgba(232,113,74,0.15);
+border: 1px solid rgba(232,113,74,0.3);
+border-radius: 8px;
+padding: 9px 14px;
+color: var(–coral);
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+white-space: nowrap;
+}
+
+.add-item-btn:hover { background: rgba(232,113,74,0.25); border-color: var(–coral); }
+
+.suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+.suggestions-label {
+font-size: 10px;
+letter-spacing: 1.5px;
+text-transform: uppercase;
+color: rgba(245,230,200,0.2);
+width: 100%;
+margin-bottom: 2px;
+}
+
+.suggestion-chip {
+background: rgba(255,255,255,0.04);
+border: 1px solid rgba(245,230,200,0.1);
+border-radius: 20px;
+padding: 4px 10px;
+font-size: 11px;
+color: rgba(245,230,200,0.4);
+cursor: pointer;
+transition: all 0.15s;
+font-family: ‘DM Sans’, sans-serif;
+}
+
+.suggestion-chip:hover {
+background: rgba(232,113,74,0.1);
+border-color: rgba(232,113,74,0.3);
+color: rgba(245,230,200,0.75);
+}
+
+.checklist-empty {
+text-align: center;
+padding: 14px 0 8px;
+color: rgba(245,230,200,0.22);
+font-size: 13px;
+font-style: italic;
+}
+
+.empty-state {
+text-align: center;
+padding: 40px 20px;
+color: rgba(245,230,200,0.3);
+font-size: 14px;
+font-weight: 300;
+font-style: italic;
+}
+
+.divider {
+border: none;
+border-top: 1px solid rgba(245,230,200,0.08);
+margin: 32px 0;
+}
+
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-24px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(20px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(245,230,200,0.2); border-radius: 3px; }
+</style>
+
+</head>
+<body>
+
+<div class="page-bg"></div>
+
+<div class="container">
+  <header>
+    <svg class="compass" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="18" cy="18" r="16" stroke="#c9963c" stroke-width="1.5"/>
+      <circle cx="18" cy="18" r="2" fill="#c9963c"/>
+      <polygon points="18,4 20,18 18,14 16,18" fill="#e8714a"/>
+      <polygon points="18,32 20,18 18,22 16,18" fill="rgba(245,230,200,0.4)"/>
+      <polygon points="4,18 18,16 14,18 18,20" fill="rgba(245,230,200,0.4)"/>
+      <polygon points="32,18 18,16 22,18 18,20" fill="rgba(245,230,200,0.4)"/>
+    </svg>
+    <div class="header-eyebrow">Your Travel Journal</div>
+    <h1>Wander<em>lust</em></h1>
+    <p class="header-sub">Count the days to your next adventure</p>
+  </header>
+
+  <div id="hero-card">
+    <div class="hero-empty" id="hero-empty">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><path d="M20 8C13.4 8 8 13.4 8 20s5.4 12 12 12 12-5.4 12-12S26.6 8 20 8zm0 2c5.5 0 10 4.5 10 10s-4.5 10-10 10S10 25.5 10 20 14.5 10 20 10zm-1 4v7l6 3.5-1 1.7-7-4V14h2z" fill="currentColor"/></svg>
+      <p>Add your first trip to start the countdown</p>
+    </div>
+    <div class="hero-content" id="hero-content" style="display:none"></div>
+  </div>
+
+  <div class="add-btn-wrap">
+    <button class="add-btn" onclick="openModal()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      Plan a Trip
+    </button>
+  </div>
+
+  <hr class="divider">
+
+  <div class="trips-section">
+    <div class="section-label">All Trips</div>
+    <div class="trips-list" id="trips-list">
+      <div class="empty-state">No trips planned yet — the world awaits ✈️</div>
+    </div>
+  </div>
+</div>
+
+<!-- Trip Modal -->
+
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <h2>Plan a Trip</h2>
+    <div class="field">
+      <label>Destination</label>
+      <input type="text" id="trip-name" placeholder="e.g. Santorini, Greece" maxlength="60">
+    </div>
+    <div class="field">
+      <label>Departure Date</label>
+      <input type="date" id="trip-start">
+    </div>
+    <div class="field">
+      <label>Return Date</label>
+      <input type="date" id="trip-end">
+    </div>
+    <div class="field">
+      <label>Vibe</label>
+      <div class="emoji-row" id="emoji-row">
+        <button class="emoji-btn selected" data-emoji="✈️">✈️</button>
+        <button class="emoji-btn" data-emoji="🏖️">🏖️</button>
+        <button class="emoji-btn" data-emoji="🏔️">🏔️</button>
+        <button class="emoji-btn" data-emoji="🏙️">🏙️</button>
+        <button class="emoji-btn" data-emoji="🌴">🌴</button>
+        <button class="emoji-btn" data-emoji="🗺️">🗺️</button>
+        <button class="emoji-btn" data-emoji="🍜">🍜</button>
+        <button class="emoji-btn" data-emoji="🎿">🎿</button>
+        <button class="emoji-btn" data-emoji="🏕️">🏕️</button>
+        <button class="emoji-btn" data-emoji="🛳️">🛳️</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveTrip()">Save Trip</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let trips = JSON.parse(localStorage.getItem('wanderlust-trips') || '[]');
+  let selectedEmoji = '✈️';
+
+  const SUGGESTIONS = [
+    'Passport','Travel insurance','Flight tickets','Hotel booking',
+    'Phone charger','Power adapter','Sunscreen','Sunglasses',
+    'Camera','Local currency','Medications','First aid kit',
+    'Toothbrush & toothpaste','Shampoo & conditioner','Deodorant',
+    'Comfortable walking shoes','Swimwear','Rain jacket',
+    'Snacks for the journey','Headphones','Book / e-reader',
+    'Visa documents','Travel pillow','Reusable water bottle',
+    'Hand sanitizer','Luggage lock','Day backpack','Umbrella'
+  ];
+
+  document.getElementById('emoji-row').addEventListener('click', e => {
+    const btn = e.target.closest('.emoji-btn');
+    if (!btn) return;
+    document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedEmoji = btn.dataset.emoji;
+  });
+
+  function openModal() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('trip-start').min = today;
+    document.getElementById('trip-end').min = today;
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('trip-name').focus(), 200);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.getElementById('trip-name').value = '';
+    document.getElementById('trip-start').value = '';
+    document.getElementById('trip-end').value = '';
+    selectedEmoji = '✈️';
+    document.querySelectorAll('.emoji-btn').forEach((b, i) => b.classList.toggle('selected', i === 0));
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function saveTrip() {
+    const name = document.getElementById('trip-name').value.trim();
+    const start = document.getElementById('trip-start').value;
+    const end = document.getElementById('trip-end').value;
+    if (!name || !start) {
+      document.getElementById('trip-name').style.borderColor = name ? '' : '#e05555';
+      document.getElementById('trip-start').style.borderColor = start ? '' : '#e05555';
+      return;
+    }
+    trips.push({ id: Date.now(), name, start, end: end || start, emoji: selectedEmoji, checklist: [], expanded: false });
+    trips.sort((a, b) => new Date(a.start) - new Date(b.start));
+    save();
+    closeModal();
+    render();
+  }
+
+  function deleteTrip(id) {
+    trips = trips.filter(t => t.id !== id);
+    save();
+    render();
+  }
+
+  function toggleExpand(id) {
+    const trip = trips.find(t => t.id === id);
+    if (!trip) return;
+    trip.expanded = !trip.expanded;
+    save();
+    const card = document.querySelector(`.trip-card[data-id="${id}"]`);
+    if (card) card.classList.toggle('expanded', trip.expanded);
+  }
+
+  function addCheckItem(tripId) {
+    const input = document.querySelector(`.add-item-input[data-trip="${tripId}"]`);
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) { input.focus(); return; }
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+    trip.checklist.push({ id: Date.now(), text, done: false });
+    save();
+    input.value = '';
+    refreshChecklist(tripId);
+    input.focus();
+  }
+
+  function addSuggestion(tripId, text) {
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+    if (trip.checklist.some(c => c.text.toLowerCase() === text.toLowerCase())) return;
+    trip.checklist.push({ id: Date.now(), text, done: false });
+    save();
+    refreshChecklist(tripId);
+  }
+
+  function toggleCheckItem(tripId, itemId) {
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+    const item = trip.checklist.find(c => c.id === itemId);
+    if (item) item.done = !item.done;
+    save();
+    refreshChecklist(tripId);
+  }
+
+  function removeCheckItem(tripId, itemId) {
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+    trip.checklist = trip.checklist.filter(c => c.id !== itemId);
+    save();
+    refreshChecklist(tripId);
+  }
+
+  function refreshChecklist(tripId) {
+    const trip = trips.find(t => t.id === tripId);
+    if (!trip) return;
+    const panel = document.querySelector(`.checklist-panel[data-trip="${tripId}"]`);
+    if (panel) buildChecklistHtml(trip, panel);
+    // Update badge
+    updateBadge(trip);
+  }
+
+  function updateBadge(trip) {
+    const badge = document.querySelector(`.checklist-badge[data-trip="${trip.id}"]`);
+    if (!badge) return;
+    const total = trip.checklist.length;
+    const done = trip.checklist.filter(c => c.done).length;
+    if (total === 0) { badge.textContent = 'Add items'; badge.className = 'checklist-badge empty'; }
+    else if (done === total) { badge.textContent = `${done}/${total} packed ✓`; badge.className = 'checklist-badge done'; }
+    else { badge.textContent = `${done}/${total} packed`; badge.className = 'checklist-badge partial'; }
+  }
+
+  function buildChecklistHtml(trip, panel) {
+    const total = trip.checklist.length;
+    const done = trip.checklist.filter(c => c.done).length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const existingTexts = trip.checklist.map(c => c.text.toLowerCase());
+    const available = SUGGESTIONS.filter(s => !existingTexts.includes(s.toLowerCase()));
+
+    panel.innerHTML = `
+      <div class="checklist-inner">
+        <div class="checklist-header">
+          <span class="checklist-title">Packing Checklist</span>
+          <span class="checklist-progress-text">${total > 0 ? `${pct}% packed` : ''}</span>
+        </div>
+        ${total > 0 ? `<div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>` : ''}
+        <div class="checklist-items">
+          ${total === 0
+            ? `<div class="checklist-empty">Nothing added yet — what do you need to pack?</div>`
+            : trip.checklist.map(item => `
+              <div class="check-item${item.done ? ' checked' : ''}">
+                <div class="check-box" onclick="toggleCheckItem(${trip.id}, ${item.id})">
+                  <svg class="check-tick" width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="check-text">${escHtml(item.text)}</span>
+                <button class="check-remove" onclick="removeCheckItem(${trip.id}, ${item.id})" title="Remove">✕</button>
+              </div>`).join('')}
+        </div>
+        <div class="add-item-row">
+          <input class="add-item-input" data-trip="${trip.id}" type="text"
+            placeholder="Add an item…" maxlength="80"
+            onkeydown="if(event.key==='Enter') addCheckItem(${trip.id})">
+          <button class="add-item-btn" onclick="addCheckItem(${trip.id})">+ Add</button>
+        </div>
+        ${available.length > 0 ? `
+        <div class="suggestions">
+          <span class="suggestions-label">Quick add</span>
+          ${available.slice(0, 12).map(s =>
+            `<button class="suggestion-chip" onclick="addSuggestion(${trip.id}, ${JSON.stringify(s)})">+ ${escHtml(s)}</button>`
+          ).join('')}
+        </div>` : ''}
+      </div>`;
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function save() {
+    localStorage.setItem('wanderlust-trips', JSON.stringify(trips));
+  }
+
+  function daysUntil(dateStr) {
+    const now = new Date(); now.setHours(0,0,0,0);
+    return Math.round((new Date(dateStr + 'T00:00:00') - now) / 86400000);
+  }
+
+  function formatDate(dateStr) {
+    return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function formatDateRange(start, end) {
+    if (start === end) return formatDate(start);
+    const sStr = new Date(start + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const eStr = new Date(end + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return `${sStr} – ${eStr}`;
+  }
+
+  function render() {
+    const list = document.getElementById('trips-list');
+    const heroEmpty = document.getElementById('hero-empty');
+    const heroContent = document.getElementById('hero-content');
+
+    const upcoming = trips.filter(t => daysUntil(t.end) >= 0);
+    const past = trips.filter(t => daysUntil(t.end) < 0);
+    const nextTrips = trips.filter(t => daysUntil(t.start) >= 0);
+
+    // Hero
+    if (nextTrips.length > 0) {
+      const next = nextTrips[0];
+      const days = daysUntil(next.start);
+      heroEmpty.style.display = 'none';
+      heroContent.style.display = 'block';
+      if (days === 0) {
+        heroContent.innerHTML = `
+          <div class="hero-label">Today's the day!</div>
+          <div class="hero-trip-name">${next.emoji} ${escHtml(next.name)}</div>
+          <div class="hero-dates">${formatDateRange(next.start, next.end)}</div>
+          <div class="hero-today">Bon voyage! 🎉</div>`;
+      } else {
+        heroContent.innerHTML = `
+          <div class="hero-label">Next Adventure</div>
+          <div class="hero-trip-name">${next.emoji} ${escHtml(next.name)}</div>
+          <div class="hero-dates">${formatDateRange(next.start, next.end)}</div>
+          <div class="countdown-grid">
+            <div class="count-block"><span class="count-num">${days}</span><span class="count-label">Days</span></div>
+            <div class="count-block"><span class="count-num">${Math.floor(days/7)}</span><span class="count-label">Weeks</span></div>
+            <div class="count-block"><span class="count-num">${days}</span><span class="count-label">Sleeps</span></div>
+            <div class="count-block"><span class="count-num">${days*24}</span><span class="count-label">Hours</span></div>
+          </div>`;
+      }
+    } else {
+      heroEmpty.style.display = 'flex';
+      heroContent.style.display = 'none';
+    }
+
+    // List
+    if (trips.length === 0) {
+      list.innerHTML = `<div class="empty-state">No trips planned yet — the world awaits ✈️</div>`;
+      return;
+    }
+
+    list.innerHTML = '';
+    [...upcoming, ...past.slice().reverse()].forEach((trip, i) => {
+      const days = daysUntil(trip.start);
+      const isPast = daysUntil(trip.end) < 0;
+      const isToday = days === 0;
+      const total = trip.checklist.length;
+      const done = trip.checklist.filter(c => c.done).length;
+
+      let countdownHtml = isPast
+        ? `<span class="trip-past-tag">Completed</span>`
+        : isToday
+          ? `<span class="trip-days-num" style="color:var(--coral)">Today!</span>`
+          : `<span class="trip-days-num">${days}</span><span class="trip-days-label">Days</span>`;
+
+      let badgeClass = 'empty', badgeText = 'Add items';
+      if (total > 0) {
+        if (done === total) { badgeClass = 'done'; badgeText = `${done}/${total} packed ✓`; }
+        else { badgeClass = 'partial'; badgeText = `${done}/${total} packed`; }
+      }
+
+      const card = document.createElement('div');
+      card.className = `trip-card${isPast ? ' past' : ''}${trip.expanded ? ' expanded' : ''}`;
+      card.dataset.id = trip.id;
+      card.style.animationDelay = `${i * 0.06}s`;
+
+      card.innerHTML = `
+        <div class="trip-header" onclick="toggleExpand(${trip.id})">
+          <div class="trip-emoji">${trip.emoji}</div>
+          <div class="trip-info">
+            <div class="trip-name">${escHtml(trip.name)}</div>
+            <div class="trip-meta">
+              <span class="trip-date-range">${formatDateRange(trip.start, trip.end)}</span>
+              <span class="checklist-badge ${badgeClass}" data-trip="${trip.id}">${badgeText}</span>
+            </div>
+          </div>
+          <div class="trip-countdown">${countdownHtml}</div>
+          <div class="trip-actions" onclick="event.stopPropagation()">
+            <button class="trip-chevron" onclick="toggleExpand(${trip.id})" title="Toggle checklist">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M3 5l4 4 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="trip-delete" onclick="deleteTrip(${trip.id})" title="Delete">✕</button>
+          </div>
+        </div>
+        <div class="checklist-panel" data-trip="${trip.id}"></div>`;
+
+      list.appendChild(card);
+
+      const panel = card.querySelector('.checklist-panel');
+      buildChecklistHtml(trip, panel);
+    });
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  render();
+</script>
+
+</body>
+</html>
